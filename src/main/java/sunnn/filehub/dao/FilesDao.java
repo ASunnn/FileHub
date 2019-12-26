@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface FilesDao {
 
-    void insertAll(List files);
-
-    List<Files> findAllBySeq(long sequence);
-
-    void deleteAllBySeq(long sequence);
+//    void insertAll(List files);
+//
+//    List<Files> findAllBySeq(long sequence);
+//
+//    void deleteAllBySeq(long sequence);
 }

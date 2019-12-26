@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>FileHub</title>
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <script src="/jquery-2.2.0.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/axios.min.js"></script>
+
+    <style>
+        body {
+            color: lightgray;
+            background-color: #333333;
+            padding-top: 70px;
+        }
+
+        .list-group-item {
+            width: 60%;
+            transition: width 0.3s;
+        }
+        .list-group-item:hover {
+            color: black;
+            width: 100%;
+        }
+        .list-group-item p {
+            margin: 0 0 0;
+        }
+
+        .list-group-item:hover .list-title {
+            float: left;
+            width: 50%;
+        }
+        .list-time {
+            display: none;
+        }
+        .list-group-item:hover .list-time {
+            float: left;
+            width: 30%;
+            display: block;
+        }
+        .list-size {
+            display: none;
+        }
+        .list-group-item:hover .list-size {
+            display: block;
+        }
+
+        .btn-type {
+            background-color: #0000;
+            padding: 0;
+            margin: 6px 12px 6px 0;
+        }
+        .label {
+            position: relative;
+            top: -1px;
+            padding: 6px 16px;
+        }
+        .label-image {
+            background-color: #f0ad4e;
+        }
+        .label-video {
+             background-color: #d9534f;
+        }
+        .label-sound {
+            background-color: #b257d9;
+        }
+        .label-pdf {
+             background-color: #e1692a;
+        }
+        .label-doc {
+            background-color: #337ab7;
+        }
+        .label-zip {
+            background-color: #5cb85c;
+        }
+        .label-other {
+            background-color: #d2d2d2;
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="menu" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/index">FileHub</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/list">List</a></li>
+                    <li><a href="#">Share</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="list" class="col-lg-9 col-md-9 col-xs-9">
+            <div class="list-group">
+                <a href="javascript:void(0)" class="list-group-item">
+                    <p class="list-title">Cras justo odio</p>
+                    <p class="list-time">time</p>
+                    <p class="list-size">size</p>
+                </a>
+                <a href="javascript:void(0)" class="list-group-item">
+                    <p class="list-title">Dapibus ac facilisis in</p>
+                    <p class="list-time">time</p>
+                    <p class="list-size">size</p>
+                </a>
+                <a href="javascript:void(0)" class="list-group-item">
+                    <p class="list-title">Morbi leo risus</p>
+                    <p class="list-time">time</p>
+                    <p class="list-size">size</p>
+                </a>
+                <a href="javascript:void(0)" class="list-group-item">
+                    <p class="list-title">Porta ac consectetur ac</p>
+                    <p class="list-time">time</p>
+                    <p class="list-size">size</p>
+                </a>
+                <a href="javascript:void(0)" class="list-group-item">
+                    <p class="list-title">Vestibulum at eros</p>
+                    <p class="list-time">time</p>
+                    <p class="list-size">size</p>
+                </a>
+            </div>
+            <nav>
+                <ul class="pager">
+                    <li class="disabled"><a href="#">Previous</a></li>
+                    <li><a href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div id="search" class="col-lg-3 col-md-3 col-xs-3 hidden-xs">
+                <form>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="name" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="start">Time</label>
+                        <input type="date" class="form-control" id="start" autocomplete="off">
+                        <label for="end">to</label>
+                        <input type="date" class="form-control" id="end" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-type"><span class="label label-default" onclick="filterControl(0, this)">图片</span></button>
+                        <button type="button" class="btn btn-type"><span class="label label-default" onclick="filterControl(1, this)">视频</span></button>
+                        <button type="button" class="btn btn-type"><span class="label label-default" onclick="filterControl(2, this)">音频</span></button>
+                        <button type="button" class="btn btn-type"><span class="label label-default" onclick="filterControl(3, this)">PDF</span></button>
+                        <button type="button" class="btn btn-type"><span class="label label-default" onclick="filterControl(4, this)">文档</span></button>
+                        <button type="button" class="btn btn-type"><span class="label label-default" onclick="filterControl(5, this)">压缩文件</span></button>
+                        <button type="button" class="btn btn-type"><span class="label label-default" onclick="filterControl(6, this)">其他</span></button>
+                    </div>
+                    <button type="button" class="btn btn-default" id="submit" onclick="upload()">Search</button>
+                </form>
+        </div>
+    </div>
+
+    <script>
+        const filterMap = {
+            0: "image",
+            1: "video",
+            2: "sound",
+            3: "pdf",
+            4: "doc",
+            5: "zip",
+            6: "other"
+        };
+
+        var typeFilter = {
+            "image" : false,
+            "video" : false,
+            "sound" : false,
+            "pdf" : false,
+            "doc" : false,
+            "zip" : false,
+            "other" : false
+        };
+
+        function filterControl(type, e) {
+            var isSelect = typeFilter[filterMap[type]];
+
+            if (isSelect) {
+                typeFilter[filterMap[type]] = false;
+                e.className = "label label-default";
+            } else {
+                typeFilter[filterMap[type]] = true;
+                e.className = "label label-" + filterMap[type];
+            }
+        }
+    </script>
+
+    <script>
+
+    </script>
+</body>
+</html>

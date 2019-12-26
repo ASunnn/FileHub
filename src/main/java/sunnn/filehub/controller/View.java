@@ -10,4 +10,14 @@ public class View {
     public String index() {
         return "index";
     }
+
+    @RequestMapping(value = "/home")
+    public String home() {
+        return "home";
+    }
+
+    @RequestMapping(value = "/list")
+    public String list() {
+        return "list";
+    }
 }
