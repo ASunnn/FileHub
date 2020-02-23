@@ -7,20 +7,19 @@
 
     <title>FileHub</title>
 
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/defalut.css" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="/filehub/css/default.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/filehub/favicon.ico">
 
-    <script src="/js/jquery-2.2.0.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <script src="/filehub/js/jquery-2.2.0.min.js"></script>
+    <script src="/filehub/js/bootstrap.min.js"></script>
 </head>
 
 <body>
     <script>
         window.onload = function () {
-            $.get("/try", function (data) {
+            $.get("/filehub/try", function (data) {
                 if (data.code === 0)
-                    window.location.href = "/home";
+                    window.location.href = "/filehub/home";
                 else {
                     var passCode = prompt("PassCode : ");
                     if (passCode != null)
@@ -30,10 +29,10 @@
         };
 
         function login(passCode) {
-            $.post("/verify", {"code": passCode},
+            $.post("/filehub/verify", {"code": passCode},
                 function(data){
                     if (data.code === 0)
-                        window.location.href = "/home";
+                        window.location.href = "/filehub/home";
                     else
                         alert("Error PassCode")
                 }, "JSON");

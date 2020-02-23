@@ -7,13 +7,13 @@
 
     <title>FileHub</title>
 
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/default.css" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="/filehub/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/filehub/css/default.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/filehub/favicon.ico">
 
-    <script src="/js/jquery-2.2.0.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/axios.min.js"></script>
+    <script src="/filehub/js/jquery-2.2.0.min.js"></script>
+    <script src="/filehub/js/bootstrap.min.js"></script>
+    <script src="/filehub/js/axios.min.js"></script>
 
     <style>
         .list-group {
@@ -95,12 +95,12 @@
     <nav id="menu" class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/home">FileHub</a>
+                <a class="navbar-brand" href="/filehub/home">FileHub</a>
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="/list">List</a></li>
-                    <li><a href="/copy">Share</a></li>
+                    <li><a href="/filehub/list">List</a></li>
+                    <li><a href="/filehub/copy">Share</a></li>
                 </ul>
             </div>
         </div>
@@ -252,7 +252,7 @@
     <script>
         window.onload = function () {
             init();
-            getCommitList("/commits?p=0", 0);
+            getCommitList("/filehub/commits?p=0", 0);
         };
 
         function init() {
@@ -350,8 +350,8 @@
             var prePager = document.getElementById("prePager");
             var nextPager = document.getElementById("nextPager");
 
-            pre = "/commits?p=" + (page - 1) + filter;
-            next = "/commits?p=" + (page + 1) + filter;
+            pre = "/filehub/commits?p=" + (page - 1) + filter;
+            next = "/filehub/commits?p=" + (page + 1) + filter;
             prePager.className = "";
             nextPager.className = "";
 
@@ -391,7 +391,7 @@
                     + "&s=" + start
                     + "&e=" + end
                     + "&f=" + type;
-            getCommitList("/commits?p=0" + filter, 0);
+            getCommitList("/filehub/commits?p=0" + filter, 0);
         }
     </script>
 
@@ -421,7 +421,7 @@
                 backdrop: false
             });
 
-            axios.post("/files/" + seq, formData, {
+            axios.post("/filehub/files/" + seq, formData, {
                 headers:{'Content-Type':'application/x-www-form-urlencoded'}
             }).then(function (response) {
                 let data = response.data;
@@ -469,7 +469,7 @@
             document.getElementById("time").innerText = time;
             document.getElementById("expire").innerText = expire;
 
-            document.getElementById("download").href = "/files/download/" + seq;
+            document.getElementById("download").href = "/filehub/files/download/" + seq;
             if (files) {
                 var fileList = document.getElementById("tableBody");
                 var count = 0;
@@ -487,7 +487,7 @@
                     size.innerText = item.size;
 
                     let link = document.createElement("a");
-                    link.href = "/files/download/" + seq + "/" + encodeURIComponent(item.name);
+                    link.href = "/filehub/files/download/" + seq + "/" + encodeURIComponent(item.name);
                     link.innerText = "download";
                     let download = document.createElement("td");
                     download.appendChild(link);
@@ -526,7 +526,7 @@
                     expire: expire,
                     encrypt: encrypt
                 };
-                axios.post("/files/share/" + seq, data)
+                axios.post("/filehub/files/share/" + seq, data)
                     .then(function (response) {
                     let data = response.data;
 
@@ -549,7 +549,7 @@
         }
 
         function deleteFiles() {
-            axios.post("/files/delete/" + seq)
+            axios.post("/filehub/files/delete/" + seq)
                 .then(function (response) {
                 let data = response.data;
 

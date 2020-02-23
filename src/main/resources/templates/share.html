@@ -7,13 +7,13 @@
 
     <title>FileHub</title>
 
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/default.css" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="/filehub/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/filehub/css/default.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/filehub/favicon.ico">
 
-    <script src="/js/jquery-2.2.0.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/axios.min.js"></script>
+    <script src="/filehub/js/jquery-2.2.0.min.js"></script>
+    <script src="/filehub/js/bootstrap.min.js"></script>
+    <script src="/filehub/js/axios.min.js"></script>
 
     <style>
         .detail-item {
@@ -32,7 +32,7 @@
     <nav id="menu" class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/index">FileHub</a>
+                <a class="navbar-brand" href="/filehub/index">FileHub</a>
             </div>
         </div>
     </nav>
@@ -82,7 +82,7 @@
         function init() {
             loading();
 
-            axios.get("/share/check?id=" + id)
+            axios.get("/filehub/share/check?id=" + id)
                 .then(function (response) {
                     let data = response.data;
 
@@ -131,7 +131,7 @@
             var formData = new FormData();
             formData.append("key", key);
 
-            axios.post("/share/" + id, formData, {
+            axios.post("/filehub/share/" + id, formData, {
                 headers:{'Content-Type':'application/x-www-form-urlencoded'}
             }).then(function (response) {
                 let data = response.data;
@@ -152,7 +152,7 @@
             document.getElementById("size").innerText = data.totalSize;
             document.getElementById("time").innerText = data.expireTime;
 
-            document.getElementById("download").href = "/share/download/" + data.id;
+            document.getElementById("download").href = "/filehub/share/download/" + data.id;
 
             var fileList = document.getElementById("tableBody");
             var count = 0;
@@ -171,7 +171,7 @@
                 size.innerText = item.size;
 
                 let link = document.createElement("a");
-                link.href = "/share/download/" + data.id + "/" + encodeURIComponent(item.name);
+                link.href = "/filehub/share/download/" + data.id + "/" + encodeURIComponent(item.name);
                 link.innerText = "download";
                 let download = document.createElement("td");
                 download.appendChild(link);

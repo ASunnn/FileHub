@@ -41,7 +41,7 @@ public class MainController {
         // 参数检查
         if (files.length == 0)
             return new Response(StatusCode.ILLEGAL_REQUEST).setDetail("必须上传文件");
-        if (name.trim().isEmpty() || name.length() > 32
+        if (name.trim().isEmpty() || name.length() > 64
                 || key.length() > 32)
             return new Response(StatusCode.ILLEGAL_REQUEST).setDetail("不允许的上传信息");
         expire = expire > 0 ? expire : -1;
