@@ -8,19 +8,14 @@
     <title>FileHub</title>
 
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/default.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-    <script src="/jquery-2.2.0.min.js"></script>
+    <script src="/js/jquery-2.2.0.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-    <script src="/axios.min.js"></script>
+    <script src="/js/axios.min.js"></script>
 
     <style>
-        body {
-            color: lightgray;
-            background-color: #333333;
-            padding-top: 70px;
-        }
-
         .upload-area {
             margin-top: 40px;
             padding: 5px 15px;
@@ -85,7 +80,7 @@
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="/list">List</a></li>
-                    <li><a href="#">Share</a></li>
+                    <li><a href="/copy">Share</a></li>
                 </ul>
             </div>
         </div>
@@ -99,15 +94,15 @@
             </div>
             <div class="form-group">
                 <label for="key">Key</label>
-                <input type="text" class="form-control" id="key" placeholder="key" autocomplete="off">
+                <input type="text" class="form-control" id="key" placeholder="key" autocomplete="off" disabled="disabled">
             </div>
             <div class="form-group">
                 <label for="expire">保留时限</label>
-                <input style="width: 20%" type="text" class="form-control" id="expire" placeholder="单位：h" autocomplete="off">
+                <input style="width: 20%" type="text" class="form-control" id="expire" placeholder="单位：d" autocomplete="off">
             </div>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" id="isEncrypt" value="false"> 加密
+                    <input type="checkbox" id="encrypt" value="false" onclick="keyControl()"> 加密
                 </label>
             </div>
             <button type="button" class="btn btn-default" id="submit" onclick="upload()">Upload</button>
@@ -137,6 +132,18 @@
         </div>
 
         <script>
+            function keyControl() {
+                var isCheck = document.getElementById("encrypt").checked;
+
+                var keyInput = document.getElementById("key");
+                if (isCheck) {
+                    keyInput.disabled = "";
+                } else {
+                    keyInput.value = "";
+                    keyInput.disabled = "disabled";
+                }
+            }
+
             var uploadArea = document.getElementById("uploadArea");
             var dragStack = 0;
 
@@ -219,6 +226,11 @@
                     element.parentElement.removeChild(element);
                     uploadArea.style.height = (10 + 32 * files.size) + "px";
                 }
+
+                if (files.size === 0) {
+                    document.getElementById("tipText").style.display = "block";
+                    uploadArea.style.textAlign = "center";
+                }
             }
         </script>
 
@@ -250,41 +262,45 @@
                 };
 
                 axios.post("/upload", getUploadData(), config)
-                .then(function() {
-                    let okButton = document.getElementById("uploadProgressOk");
-                    okButton.style.display = "inline-block";
-                    let cancelButton = document.getElementById("uploadProgressCancel");
-                    cancelButton.style.display = "none";
-                }).catch(function(error) {
-                    if (axios.isCancel(error)) {
-                        console.log("冇事发生");
-                        return;
-                    }
+                    .then(function(response) {
+                        let data = response.data;
+                        let bar = document.getElementById("uploadProgress");
 
-                    let bar = document.getElementById("uploadProgress");
+                        if (data.code === 0) {
+                            bar.innerText = data.msg;
+                            let okButton = document.getElementById("uploadProgressOk");
+                            okButton.style.display = "inline-block";
+                            let cancelButton = document.getElementById("uploadProgressCancel");
+                            cancelButton.style.display = "none";
+                        } else {
+                            bar.innerText = data.msg + " : " + data.detail;
+                        }
+                    }).catch(function(error) {
+                        if (axios.isCancel(error)) {
+                            // console.log("冇事发生");
+                            return;
+                        }
 
-                    if (error.response)
-                        bar.innerText = error.status;
-                    else
+                        let bar = document.getElementById("uploadProgress");
                         bar.innerText = error.message;
-                    bar.style.width = "100%";
-                });
+                        bar.style.width = "100%";
+                    });
 
-                $("#uploadProgressBlank").modal({
-                    keyboard: false,
-                    backdrop: false
-                });
+                    $("#uploadProgressBlank").modal({
+                        keyboard: false,
+                        backdrop: false
+                    });
             }
 
             function getUploadData() {
                 var formData = new FormData();
-                files.forEach(function(key, val) {
+                files.forEach(function(val, key) {
                     formData.append("file", val);
                 });
                 formData.append("name", document.getElementById("name").value);
                 formData.append("key", document.getElementById("key").value);
-                formData.append("expire", document.getElementById("expire").value);
-                formData.append("isEncrypt", document.getElementById("isEncrypt").checked);
+                formData.append("expire",
+                    document.getElementById("expire").value === "" ? "0" : document.getElementById("expire").value);
 
                 return formData;
             }

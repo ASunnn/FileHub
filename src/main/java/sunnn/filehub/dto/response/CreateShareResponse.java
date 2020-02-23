@@ -10,14 +10,13 @@ import sunnn.filehub.util.StatusCode;
 @Setter
 @Accessors(chain = true)
 @ToString
-public class BaseResponse {
+public class CreateShareResponse extends Response {
 
-    private int code;
+    private String url;
 
-    private String msg;
+    private String key;
 
-    public BaseResponse(StatusCode statusCode) {
-        this.code = statusCode.getCode();
-        this.msg = statusCode.name();
+    public CreateShareResponse(StatusCode statusCode) {
+        super(statusCode);
     }
 }

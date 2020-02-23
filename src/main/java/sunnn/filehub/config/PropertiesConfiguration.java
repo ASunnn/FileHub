@@ -53,17 +53,21 @@ class ConfigLoader {
         if (port != null)
             FileHubProperties.setPort(Integer.valueOf(port));
 
-
         String verifyCode = properties.getProperty("verifyCode");
         if (verifyCode == null)
             throw new IllegalPropertiesException("Cannot Find Properties 'verifyCode'");
         FileHubProperties.setVerifyCode(verifyCode);
 
-
         String savePath = properties.getProperty("savePath");
         if (savePath == null)
             throw new IllegalPropertiesException("Cannot Find Properties 'savePath'");
         FileHubProperties.setSavePath(savePath);
+
+        String localhost = properties.getProperty("path");
+        if (localhost == null)
+            throw new IllegalPropertiesException("Cannot Find Properties 'path'");
+        FileHubProperties.setPath(localhost);
+
 
         String loginTimeout = properties.getProperty("loginTimeout");
         if (loginTimeout != null)

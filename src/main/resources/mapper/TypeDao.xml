@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sunnn.filehub.dao.TypeDao">
+
+    <insert id="insertAll" parameterType="java.util.List">
+        INSERT INTO `type` (sequence, `type`)
+        VALUES
+        <foreach collection="list" item="t" separator=",">
+            (#{t.sequence}, #{t.type})
+        </foreach>
+    </insert>
+
+    <delete id="deleteAllBySeq">
+        DELETE FROM `type` WHERE sequence = #{sequence}
+    </delete>
+</mapper>

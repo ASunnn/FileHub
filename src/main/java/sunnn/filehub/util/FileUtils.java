@@ -27,7 +27,7 @@ public class FileUtils {
         if (!createPath(path))
             throw new IOException("Cannot Create Path :" + path);
 
-        File f = new File(path + file.getOriginalFilename());
+        File f = new File(path + File.separator + file.getOriginalFilename());
         file.transferTo(f);
         return f;
     }

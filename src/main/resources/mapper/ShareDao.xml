@@ -3,4 +3,62 @@
 
 <mapper namespace="sunnn.filehub.dao.ShareDao">
 
+    <insert id="insert" parameterType="sunnn.filehub.entity.Share">
+        INSERT INTO `share` (
+            id,
+            sequence,
+            `key`,
+            expireTime)
+        VALUES (
+            #{id},
+            #{sequence},
+            #{key},
+            #{expireTime}
+        )
+    </insert>
+
+    <select id="find" parameterType="java.lang.String" resultType="sunnn.filehub.entity.Share">
+        SELECT
+            c.sequence,
+            c.`name`,
+            c.totalSize,
+            s.id,
+            s.key,
+            s.expireTime
+        FROM
+            `share` AS s,
+            `commit` AS c
+        WHERE
+            s.sequence = c.sequence
+            AND s.id = #{id}
+    </select>
+
+    <select id="findAll" resultType="sunnn.filehub.entity.Share">
+        SELECT
+            c.sequence,
+            c.`name`,
+            c.totalSize,
+            s.id,
+            s.key,
+            s.expireTime
+        FROM
+            `share` AS s,
+            `commit` AS c
+        WHERE
+	        s.sequence = c.sequence
+	    ORDER BY
+	        s.expireTime
+    </select>
+
+    <select id="findByIdAndKey" resultType="sunnn.filehub.entity.Share">
+        SELECT *
+        FROM `share`
+        WHERE
+            id = #{id}
+            AND `key` = #{key}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM `share` WHERE id = #{id}
+    </delete>
 </mapper>

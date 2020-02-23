@@ -1,16 +1,18 @@
-package sunnn.filehub.util;
+package sunnn.filehub.entity;
 
-public enum StatusCode {
+public enum  Word {
 
-    OJBK(0),
-    ERROR(-1),
-    VERIFY_FAILED(1 << 0),
-    ILLEGAL_REQUEST(1 << 1),
-    NO_ACCESS(1 << 2);
+    Other(0),
+    Img(1),
+    Mov(2),
+    Audio(3),
+    Pdf(4),
+    Doc(5),
+    Zip(6);
 
     private int code;
 
-    StatusCode(int code) {
+    Word(int code) {
         this.code = code;
     }
 

@@ -10,7 +10,9 @@ public class FileHubProperties {
 
     public static String savePath;
 
-    public static int loginTimeout = 120;
+    public static String path;
+
+    public static int loginTimeout = 86400 * 5;
 
     public static String host;
 
@@ -33,6 +35,10 @@ public class FileHubProperties {
             FileHubProperties.savePath = savePath + File.separator;
         else
             FileHubProperties.savePath = savePath;
+    }
+
+    public static void setPath(String path) {
+        FileHubProperties.path = path;
     }
 
     public static void setLoginTimeout(int loginTimeout) {

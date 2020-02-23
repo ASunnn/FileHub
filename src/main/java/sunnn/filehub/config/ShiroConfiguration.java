@@ -66,15 +66,14 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/try", "anon");
         filterChainDefinitionMap.put("/index", "anon");
 
+        filterChainDefinitionMap.put("/s/**", "anon");
+        filterChainDefinitionMap.put("/share/**", "anon");
+
         filterChainDefinitionMap.put("/favicon.ico", "anon");
-        filterChainDefinitionMap.put("/jquery-2.0.3.min.js", "anon");
-        filterChainDefinitionMap.put("/default.css", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/css/**", "anon");
 
         filterChainDefinitionMap.put("/**", "user");
-//        filterChainDefinitionMap.put("/**", "authc");
-//        filterChainDefinitionMap.put("/index", "logout");
 
         shiroFilterFactoryBean.setLoginUrl("/index");
         shiroFilterFactoryBean.setSuccessUrl("/home");

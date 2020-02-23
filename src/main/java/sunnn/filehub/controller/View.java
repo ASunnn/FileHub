@@ -20,4 +20,14 @@ public class View {
     public String list() {
         return "list";
     }
+
+    @RequestMapping(value = "/copy")
+    public String copy() {
+        return "copy";
+    }
+
+    @RequestMapping(value = "/s/*")
+    public String share() {
+        return "share";
+    }
 }

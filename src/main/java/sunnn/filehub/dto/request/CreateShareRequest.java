@@ -1,4 +1,4 @@
-package sunnn.filehub.entity;
+package sunnn.filehub.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,13 +9,9 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @ToString
-public class Files {
+public class CreateShareRequest {
 
-    private long sequence;
+    private int expire;
 
-    private String id;
-
-    private String name;
-
-    private long size;
+    private boolean encrypt;
 }

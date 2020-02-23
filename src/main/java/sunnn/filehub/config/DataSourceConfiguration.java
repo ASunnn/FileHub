@@ -43,6 +43,6 @@ public class DataSourceConfiguration {
         return "jdbc:mysql://"
                 + FileHubProperties.host
                 + "/" + FileHubProperties.database
-                + "?characterEncoding=utf8&useSSL=false";
+                + "?characterEncoding=utf8&serverTimezone=UTC";
     }
 }

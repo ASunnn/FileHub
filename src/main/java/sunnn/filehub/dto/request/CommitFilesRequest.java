@@ -1,34 +1,25 @@
-package sunnn.filehub.entity;
+package sunnn.filehub.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.web.multipart.MultipartFile;
+import sunnn.filehub.entity.Files;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 @Getter
 @Setter
 @Accessors(chain = true)
 @ToString
-public class Commit {
-
-    private long sequence;
+public class CommitFilesRequest {
 
     private String name;
-
-    private boolean encrypt;
 
     private String key;
 
     private int expire;
 
-    private List<Files> files;
-
-    private long totalSize;
-
-    private List<Type> types;
-
-    private Timestamp uploadTime;
+    private MultipartFile[] files;
 }
