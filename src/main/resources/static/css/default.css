@@ -1,8 +1,18 @@
 body {
     color: lightgray;
     background-color: #333333;
-    padding-top: 70px;
+    padding-top: 166px;
 }
+@media (min-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+}
+
+.collapse {
+    display: block;
+}
+
 .h1 {
     font-size: 72px;
     text-align: center;
