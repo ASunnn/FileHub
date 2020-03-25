@@ -145,194 +145,194 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            function keyControl() {
-                var isCheck = document.getElementById("encrypt").checked;
+    <script>
+        function keyControl() {
+            var isCheck = document.getElementById("encrypt").checked;
 
-                var keyInput = document.getElementById("key");
-                if (isCheck) {
-                    keyInput.disabled = "";
-                } else {
-                    keyInput.value = "";
-                    keyInput.disabled = "disabled";
+            var keyInput = document.getElementById("key");
+            if (isCheck) {
+                keyInput.disabled = "";
+            } else {
+                keyInput.value = "";
+                keyInput.disabled = "disabled";
+            }
+        }
+
+        document.getElementById("tipText").addEventListener("click", function(e) {
+            document.getElementById("fileSelect").click();
+        });
+
+        document.getElementById("fileSelect").addEventListener("change", function(e) {
+            var input = document.getElementById("fileSelect");
+            addFiles(input.files);
+        });
+
+        var uploadArea = document.getElementById("uploadArea");
+        var dragStack = 0;
+
+        uploadArea.onselectstart = function(e) {
+            return false;
+        };
+
+        uploadArea.addEventListener("dragenter", function(e) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            ++dragStack;
+            uploadArea.style.backgroundColor = "#f5f5f5";
+        });
+        uploadArea.addEventListener("dragover", function(e) {
+            event.stopPropagation();
+            event.preventDefault();
+        });
+        uploadArea.addEventListener("drop", function(e) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            addFiles(e.dataTransfer.files);
+            dragStack = 0;
+            uploadArea.style.backgroundColor = "#ccc";
+        });
+        uploadArea.addEventListener("dragleave", function(e) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            --dragStack;
+            if (dragStack <= 0)
+                uploadArea.style.backgroundColor = "#ccc";
+        });
+    </script>
+
+    <script>
+        var selectedFiles = new Map();
+
+        function addFiles(files) {
+            if (files.length <= 0)
+                return;
+
+            if (selectedFiles.size === 0) {
+                document.getElementById("tipText").style.display = "none";
+                uploadArea.style.textAlign = "left";
+            }
+
+            for (let i = 0; i < files.length; ++i) {
+                let f = files[i];
+
+                if (!selectedFiles.has(f.name)) {
+                    selectedFiles.set(f.name, f);
+
+                    let p = document.createElement("p");
+                    p.innerText = f.name;
+
+                    let icon = document.createElement("span");
+                    icon.className = "glyphicon glyphicon-remove";
+                    let b = document.createElement("button");
+                    b.className = "btn";
+                    b.setAttribute("onclick", "removeFiles(\"" + f.name + "\", this)");
+                    b.appendChild(icon);
+
+                    let d = document.createElement("div");
+                    d.appendChild(p);
+                    d.appendChild(b);
+                    uploadArea.appendChild(d);
                 }
             }
 
-            document.getElementById("tipText").addEventListener("click", function(e) {
-                document.getElementById("fileSelect").click();
-            });
+            // uploadArea.style.height = (10 + 32 * files.size) + "px";
+        }
 
-            document.getElementById("fileSelect").addEventListener("change", function(e) {
-                var input = document.getElementById("fileSelect");
-                addFiles(input.files);
-            });
+        function removeFiles(name, e) {
+            var element = e.parentElement;
 
-            var uploadArea = document.getElementById("uploadArea");
-            var dragStack = 0;
+            if (selectedFiles.has(name)) {
+                selectedFiles.delete(name);
+                element.parentElement.removeChild(element);
+                // uploadArea.style.height = (10 + 32 * selectedFiles.size) + "px";
+            }
 
-            uploadArea.onselectstart = function(e) {
-                return false;
+            if (selectedFiles.size === 0) {
+                document.getElementById("tipText").style.display = "block";
+                uploadArea.style.textAlign = "center";
+            }
+        }
+    </script>
+
+    <script>
+        const CancelToken = axios.CancelToken;
+        var cancel;
+
+        function upload() {
+            var config = {
+                headers:{'Content-Type':'multipart/form-data'},
+                cancelToken: new CancelToken(function executor(c) {
+                    cancel = c;
+                }),
+                onUploadProgress: function(e) {
+                    let bar = document.getElementById("uploadProgress");
+
+                    if (e.lengthComputable) {
+                        let value = ((e.loaded / e.total) * 100).toFixed(1);
+
+                        bar.innerText = value + "%";
+                        bar.style.width = value + "%";
+                        bar.setAttribute("aria-valuenow", value);
+                    } else {
+                        bar.innerText = "upload……";
+                        bar.style.width = "100%";
+                        bar.setAttribute("aria-valuenow", 100);
+                    }
+                }
             };
 
-            uploadArea.addEventListener("dragenter", function(e) {
-                event.stopPropagation();
-                event.preventDefault();
+            axios.post("/filehub/upload", getUploadData(), config)
+                .then(function(response) {
+                    let data = response.data;
+                    let bar = document.getElementById("uploadProgress");
 
-                ++dragStack;
-                uploadArea.style.backgroundColor = "#f5f5f5";
-            });
-            uploadArea.addEventListener("dragover", function(e) {
-                event.stopPropagation();
-                event.preventDefault();
-            });
-            uploadArea.addEventListener("drop", function(e) {
-                event.stopPropagation();
-                event.preventDefault();
-
-                addFiles(e.dataTransfer.files);
-                dragStack = 0;
-                uploadArea.style.backgroundColor = "#ccc";
-            });
-            uploadArea.addEventListener("dragleave", function(e) {
-                event.stopPropagation();
-                event.preventDefault();
-
-                --dragStack;
-                if (dragStack <= 0)
-                    uploadArea.style.backgroundColor = "#ccc";
-            });
-        </script>
-
-        <script>
-            var selectedFiles = new Map();
-
-            function addFiles(files) {
-                if (files.length <= 0)
+                    if (data.code === 0) {
+                        bar.innerText = data.msg;
+                        let okButton = document.getElementById("uploadProgressOk");
+                        okButton.style.display = "inline-block";
+                        let cancelButton = document.getElementById("uploadProgressCancel");
+                        cancelButton.style.display = "none";
+                    } else {
+                        bar.innerText = data.msg + " : " + data.detail;
+                    }
+                }).catch(function(error) {
+                if (axios.isCancel(error)) {
+                    // console.log("冇事发生");
                     return;
-
-                if (selectedFiles.size === 0) {
-                    document.getElementById("tipText").style.display = "none";
-                    uploadArea.style.textAlign = "left";
                 }
 
-                for (let i = 0; i < files.length; ++i) {
-                    let f = files[i];
+                let bar = document.getElementById("uploadProgress");
+                bar.innerText = error.message;
+                bar.style.width = "100%";
+            });
 
-                    if (!selectedFiles.has(f.name)) {
-                        selectedFiles.set(f.name, f);
+            $("#uploadProgressBlank").modal({
+                keyboard: false,
+                backdrop: false
+            });
+        }
 
-                        let p = document.createElement("p");
-                        p.innerText = f.name;
+        function getUploadData() {
+            var formData = new FormData();
+            selectedFiles.forEach(function(val, key) {
+                formData.append("file", val);
+            });
+            formData.append("name", document.getElementById("name").value);
+            formData.append("key", document.getElementById("key").value);
+            formData.append("expire",
+                document.getElementById("expire").value === "" ? "0" : document.getElementById("expire").value);
 
-                        let icon = document.createElement("span");
-                        icon.className = "glyphicon glyphicon-remove";
-                        let b = document.createElement("button");
-                        b.className = "btn";
-                        b.setAttribute("onclick", "removeFiles(\"" + f.name + "\", this)");
-                        b.appendChild(icon);
+            return formData;
+        }
 
-                        let d = document.createElement("div");
-                        d.appendChild(p);
-                        d.appendChild(b);
-                        uploadArea.appendChild(d);
-                    }
-                }
-
-                // uploadArea.style.height = (10 + 32 * files.size) + "px";
-            }
-
-            function removeFiles(name, e) {
-                var element = e.parentElement;
-
-                if (selectedFiles.has(name)) {
-                    selectedFiles.delete(name);
-                    element.parentElement.removeChild(element);
-                    // uploadArea.style.height = (10 + 32 * selectedFiles.size) + "px";
-                }
-
-                if (selectedFiles.size === 0) {
-                    document.getElementById("tipText").style.display = "block";
-                    uploadArea.style.textAlign = "center";
-                }
-            }
-        </script>
-
-        <script>
-            const CancelToken = axios.CancelToken;
-            var cancel;
-
-            function upload() {
-                var config = {
-                    headers:{'Content-Type':'multipart/form-data'},
-                    cancelToken: new CancelToken(function executor(c) {
-                        cancel = c;
-                    }),
-                    onUploadProgress: function(e) {
-                        let bar = document.getElementById("uploadProgress");
-
-                        if (e.lengthComputable) {
-                            let value = ((e.loaded / e.total) * 100).toFixed(1);
-
-                            bar.innerText = value + "%";
-                            bar.style.width = value + "%";
-                            bar.setAttribute("aria-valuenow", value);
-                        } else {
-                            bar.innerText = "upload……";
-                            bar.style.width = "100%";
-                            bar.setAttribute("aria-valuenow", 100);
-                        }
-                    }
-                };
-
-                axios.post("/filehub/upload", getUploadData(), config)
-                    .then(function(response) {
-                        let data = response.data;
-                        let bar = document.getElementById("uploadProgress");
-
-                        if (data.code === 0) {
-                            bar.innerText = data.msg;
-                            let okButton = document.getElementById("uploadProgressOk");
-                            okButton.style.display = "inline-block";
-                            let cancelButton = document.getElementById("uploadProgressCancel");
-                            cancelButton.style.display = "none";
-                        } else {
-                            bar.innerText = data.msg + " : " + data.detail;
-                        }
-                    }).catch(function(error) {
-                        if (axios.isCancel(error)) {
-                            // console.log("冇事发生");
-                            return;
-                        }
-
-                        let bar = document.getElementById("uploadProgress");
-                        bar.innerText = error.message;
-                        bar.style.width = "100%";
-                    });
-
-                    $("#uploadProgressBlank").modal({
-                        keyboard: false,
-                        backdrop: false
-                    });
-            }
-
-            function getUploadData() {
-                var formData = new FormData();
-                selectedFiles.forEach(function(val, key) {
-                    formData.append("file", val);
-                });
-                formData.append("name", document.getElementById("name").value);
-                formData.append("key", document.getElementById("key").value);
-                formData.append("expire",
-                    document.getElementById("expire").value === "" ? "0" : document.getElementById("expire").value);
-
-                return formData;
-            }
-
-            function completeUpload() {
-                window.location.reload();
-            }
-        </script>
-    </div>
+        function completeUpload() {
+            window.location.reload();
+        }
+    </script>
 </body>
 </html>
