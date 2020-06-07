@@ -1,11 +1,7 @@
 package sunnn.filehub.controller;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sunnn.filehub.dto.request.CreateShareRequest;
 import sunnn.filehub.dto.response.Response;
@@ -13,8 +9,9 @@ import sunnn.filehub.exception.FileNotFoundException;
 import sunnn.filehub.service.FileService;
 import sunnn.filehub.service.ShareService;
 
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 
 @RestController
 public class FileController {
@@ -47,25 +44,32 @@ public class FileController {
      * 两段式———— /id/详细文件
      */
     @GetMapping("/files/download/{sequence}")
-    public ResponseEntity download(@PathVariable("sequence") long sequence) throws FileNotFoundException, IOException {
+    public void download(@PathVariable("sequence") long sequence, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException, IOException {
         File file = fileService.downloadFiles(sequence);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment",
-                new String(file.getName().getBytes(), "ISO-8859-1"));
-        return new ResponseEntity<>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+        download(file, response);
     }
 
     @GetMapping("/files/download/{sequence}/{name}")
-    public ResponseEntity download(@PathVariable("sequence") long sequence, @PathVariable("name") String name) throws FileNotFoundException, IOException {
+    public void download(@PathVariable("sequence") long sequence, @PathVariable("name") String name,
+                         HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException, IOException {
         File file = fileService.downloadFile(sequence, name);
+        download(file, response);
+    }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment",
-                new String(file.getName().getBytes(), "ISO-8859-1"));
-        return new ResponseEntity<>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+    private void download(File file, HttpServletResponse response) throws IOException {
+        response.setHeader("Content-Type", MediaType.APPLICATION_OCTET_STREAM.toString());
+        response.setHeader("Content-Disposition", "attachment; filename=" + new String(file.getName().getBytes(), "ISO-8859-1"));
+
+        InputStream inputStream = new FileInputStream(file);
+        int read;
+        byte[] bytes = new byte[1024 * 1024];
+        OutputStream outputStream = response.getOutputStream();
+        while((read = inputStream.read(bytes))!=-1){
+            outputStream.write(bytes, 0, read);
+        }
+        outputStream.flush();
+        inputStream.close();
+        outputStream.close();
     }
 
     /**

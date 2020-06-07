@@ -108,7 +108,7 @@ public class ZipCompress {
          */
         BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
         int count;
-        byte data[] = new byte[buffer];
+        byte[] data = new byte[buffer];
         while ((count = inputStream.read(data, 0, buffer)) != -1)
             zipOutputStream.write(data, 0, count);
 
