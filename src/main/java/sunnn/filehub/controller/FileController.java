@@ -59,6 +59,7 @@ public class FileController {
     private void download(File file, HttpServletResponse response) throws IOException {
         response.setHeader("Content-Type", MediaType.APPLICATION_OCTET_STREAM.toString());
         response.setHeader("Content-Disposition", "attachment; filename=" + new String(file.getName().getBytes(), "ISO-8859-1"));
+        response.setHeader("Content-Length", String.valueOf(file.length()));
 
         InputStream inputStream = new FileInputStream(file);
         int read;
