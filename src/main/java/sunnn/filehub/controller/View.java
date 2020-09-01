@@ -6,28 +6,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class View {
 
+    @RequestMapping(value = "/login")
+    public String login() {
+        return "/index.html";
+    }
+
     @RequestMapping(value = "/index")
     public String index() {
-        return "index";
+        return "/index.html";
     }
 
     @RequestMapping(value = "/home")
     public String home() {
-        return "home";
+        return "/index.html";
     }
 
     @RequestMapping(value = "/list")
     public String list() {
-        return "list";
+        return "/index.html";
     }
 
-    @RequestMapping(value = "/copy")
+    @RequestMapping(value = "/share")
     public String copy() {
-        return "copy";
+        return "/index.html";
     }
 
     @RequestMapping(value = "/s/*")
     public String share() {
-        return "share";
+        return "/index.html";
     }
 }

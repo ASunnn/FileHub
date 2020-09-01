@@ -66,18 +66,20 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/try", "anon");
         filterChainDefinitionMap.put("/index", "anon");
 
+        filterChainDefinitionMap.put("/share", "user");
         filterChainDefinitionMap.put("/s/**", "anon");
         filterChainDefinitionMap.put("/share/**", "anon");
 
         filterChainDefinitionMap.put("/favicon.ico", "anon");
-        filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/css/**", "anon");
+        filterChainDefinitionMap.put("/fonts/**", "anon");
+        filterChainDefinitionMap.put("/js/**", "anon");
 
         filterChainDefinitionMap.put("/**", "user");
 
-        shiroFilterFactoryBean.setLoginUrl("/index");
-        shiroFilterFactoryBean.setSuccessUrl("/home");
-        shiroFilterFactoryBean.setUnauthorizedUrl("/index");
+        shiroFilterFactoryBean.setLoginUrl("/login");
+        shiroFilterFactoryBean.setSuccessUrl("/index");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/login");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
