@@ -64,7 +64,6 @@ public class ShiroConfiguration {
         // 顺序拦截
         filterChainDefinitionMap.put("/verify", "anon");
         filterChainDefinitionMap.put("/try", "anon");
-        filterChainDefinitionMap.put("/index", "anon");
 
         filterChainDefinitionMap.put("/share", "user");
         filterChainDefinitionMap.put("/s/**", "anon");
